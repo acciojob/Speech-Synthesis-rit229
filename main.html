@@ -37,6 +37,53 @@
   const stopButton = document.querySelector('#stop');
 
   //Your code goes here
+	 const msg = new SpeechSynthesisUtterance();
+  let voices = [];
+  const voicesDropdown = document.querySelector('[name="voice"]');
+  const speakButton = document.querySelector('#speak');
+  const stopButton = document.querySelector('#stop');
+
+  // Populate voices
+  window.speechSynthesis.onvoiceschanged = () => {
+      voices = window.speechSynthesis.getVoices();
+      voices.forEach(voice => {
+          const option = document.createElement('option');
+          option.value = voice.name;
+          option.textContent = `${voice.name} (${voice.lang})`;
+          voicesDropdown.appendChild(option);
+      });
+  };
+
+  // Speak functionality
+  speakButton.addEventListener('click', () => {
+      const text = document.querySelector('[name="text"]').value;
+      const selectedVoice = voicesDropdown.value;
+
+      if (text) {
+          msg.text = text;
+          msg.voice = voices.find(voice => voice.name === selectedVoice);
+          msg.rate = document.querySelector('[name="rate"]').value;
+          msg.pitch = document.querySelector('[name="pitch"]').value;
+
+          window.speechSynthesis.speak(msg);
+      } else {
+          alert("Please enter some text to speak.");
+      }
+  });
+
+  // Stop functionality
+  stopButton.addEventListener('click', () => {
+      window.speechSynthesis.cancel();
+  });
+
+  // Update rate and pitch
+  document.querySelector('[name="rate"]').addEventListener('input', (event) => {
+      msg.rate = event.target.value;
+  });
+
+  document.querySelector('[name="pitch"]').addEventListener('input', (event) => {
+      msg.pitch = event.target.value;
+  });
 </script>
 
 </body>
